@@ -11,10 +11,12 @@ import codes.idziejczak.aboutme.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private val myName: MyName = MyName("Mateusz Idziejczak")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.myName = myName
         binding.doneButton.setOnClickListener {
             addNickname()
         }
@@ -25,20 +27,25 @@ class MainActivity : AppCompatActivity() {
 
     private fun addNickname() {
         //view = button that says DONE
-        binding.nicknameText.text = binding.nicknameEdit.text.toString()
-        binding.nicknameEdit.visibility = View.GONE
-        binding.doneButton.visibility = View.GONE
-        binding.nicknameText.visibility = View.VISIBLE
+        binding.apply {
+            myName?.nickname = nicknameEdit.text.toString()
+            invalidateAll()
+            nicknameEdit.visibility = View.GONE
+            doneButton.visibility = View.GONE
+            nicknameText.visibility = View.VISIBLE
+        }
         val inputMethodManager =
             getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(binding.doneButton.windowToken, 0)
     }
 
     private fun updateNickname() {
-        binding.nicknameEdit.visibility = View.VISIBLE
-        binding.doneButton.visibility = View.VISIBLE
-        binding.nicknameText.visibility = View.GONE
-        binding.nicknameEdit.requestFocus()
+        binding.apply {
+            nicknameEdit.visibility = View.VISIBLE
+            doneButton.visibility = View.VISIBLE
+            nicknameText.visibility = View.GONE
+            nicknameEdit.requestFocus()
+        }
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(binding.nicknameEdit, 0)
     }
